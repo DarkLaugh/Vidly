@@ -21,6 +21,8 @@
         </div>
     </div>
 
+    <p class="text-danger invisible error-message">You have already added this movie to the list of movies for rent !</p>
+
     <div class="row">
         <div class="col-md-4">
             <ul class="list-group" id="movies"></ul>
@@ -74,9 +76,23 @@
                 display: 'name',
                 source: movies
             }).on("typeahead:select", function (e, movie) {
-                $("#movies").append("<li class='list-group-item'>" + movie.name + "</li>");
-                $("#movie").typeahead("val", "");
-                vm.movieIds.push(movie.id);
+                if (vm.movieIds.length > 0) {
+                    if ($.inArray(movie.id, vm.movieIds) > -1) {
+                        $(".error-message").removeClass("invisible").addClass("visible");
+                    }
+
+                    else {
+                        $("#movies").append("<li class='list-group-item'>" + movie.name + "</li>");
+                        $("#movie").typeahead("val", "");
+                        $(".error-message").removeClass("visible").addClass("invisible");
+                        vm.movieIds.push(movie.id);
+                    }
+                }
+                else {
+                    $("#movies").append("<li class='list-group-item'>" + movie.name + "</li>");
+                    $("#movie").typeahead("val", "");
+                    vm.movieIds.push(movie.id);
+                }
             });
 
             $.validator.addMethod("validCustomer", function () {
